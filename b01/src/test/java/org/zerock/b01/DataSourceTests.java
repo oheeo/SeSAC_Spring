@@ -21,7 +21,7 @@ public class DataSourceTests {
     @Test
     public void testConnenction() throws SQLException {
 
-        @Cleanup
+        @Cleanup  // close를 자동으로 해줌
         Connection con = dataSource.getConnection();
 
         log.info(con);

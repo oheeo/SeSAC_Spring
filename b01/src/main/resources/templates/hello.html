@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1 th:text="${msg}"></h1>
+
+<!--/*  <h3 th:each="${sos}">SOS</h3> */-->
+
+<!--/* ${aaaa + bbb } */-->
+<!--/*
+ <div>
+    <h1>AAAA</h1>
+ </div>
+*/-->
+
+<!--/* 임시로 변수를 선언해야 하는 상황에서 'th:with' 를 이용 */-->
+<!--/* '변수명 = 값'의 형태로 ',' 를 이용해서 여러 개 선언 가능 */-->
+<div th:with="num1 = ${10}, num2 = ${20}">
+    <h4 th:text="${num1 + num2}"></h4>
+</div>
+
+</body>
+</html>
