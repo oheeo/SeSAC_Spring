@@ -59,4 +59,44 @@ public class ReplyController {
         return responseDTO;
     }
 
+    // 특정한 댓글을 조회할 때는 Reply의 rno를 경로로 이용해서 GET 방식으로 처리함
+    @ApiOperation(value = "Read Reply", notes = "GET 방식으로 특정 댓글 조회")
+    @GetMapping("/{rno}")
+    public ReplyDTO getReplyDTO( @PathVariable("rno") Long rno ) {
+
+        ReplyDTO replyDTO = replyService.read(rno);
+
+        return replyDTO;
+    }
+
+    @ApiOperation(value = "Delete Reply", notes = "DELETE 방식으로 특정 댓글 삭제")
+    @DeleteMapping("/{rno}")
+    public Map<String,Long> remove( @PathVariable("rno") Long rno ) {
+
+        replyService.remove(rno);
+
+        Map<String, Long> resultMap = new HashMap<>();
+
+        resultMap.put("rno", rno);
+
+        return resultMap;
+    }
+
+    // 댓글 수정은 PUT 방식으로 처리
+    // 수정할 때도 등록과 마찬가지로 JSON 문자열이 전송되므로 이를 처리하도록 @RequestBody를 적용
+    @ApiOperation(value = "Modify Reply", notes = "PUT 방식으로 특정 댓글 수정")
+    @PutMapping(value = "/{rno}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String,Long> remove( @PathVariable("rno") Long rno, @RequestBody
+                                    ReplyDTO replyDTO) {
+        replyDTO.setRno(rno);  // 번호를 일치시킴
+
+        replyService.modify(replyDTO);
+
+        Map<String, Long> resultMap = new HashMap<>();
+
+        resultMap.put("rno", rno);
+
+        return resultMap;
+    }
+
 }
