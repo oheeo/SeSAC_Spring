@@ -26,7 +26,7 @@ async function get1(bno) {
 /*  bno : 현재 게시물 번호
     page : 페이지 번호
     size : 페이지당 사이즈
-    goList : 마지막 페이지 호출 여부 (댓글의 경우 한 페이지에서 모든 동작이 이루어지는데 새로 등록된 댓글은 마지막 페이지에 있기 때문에 강제적으로 마지막 댓글 페이지를 호출)  */
+    goLast : 마지막 페이지 호출 여부 (댓글의 경우 한 페이지에서 모든 동작이 이루어지는데 새로 등록된 댓글은 마지막 페이지에 있기 때문에 강제적으로 마지막 댓글 페이지를 호출)  */
 async function getList({bno, page, size, goLast}){
 
     const result = await axios.get(`/replies/list/${bno}`, {params: {page, size}})
@@ -42,7 +42,9 @@ async function getList({bno, page, size, goLast}){
     return result.data
 }
 
-
+// 새로운 댓글을 등록하는 기능
+// 파라미터를 JS의 객체로 받아서 axios.post()를 이용해서 전달
+// addReply()가 정상적으로 처리되면 서버에서는 '{'rno':11}'과 같은 JSON 데이터를 전송
 async function addReply(replyObj) {
     const response = await axios.post(`/replies/`,replyObj)
     return response.data

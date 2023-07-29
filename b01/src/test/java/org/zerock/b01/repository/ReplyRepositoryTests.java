@@ -22,8 +22,8 @@ public class ReplyRepositoryTests {
     @Test
     public void testInsert() {
 
-        // 실제 DB에 있는 bno
-        Long bno = 100L;
+        //실제 DB에 있는 bno
+        Long bno  = 100L;
 
         Board board = Board.builder().bno(bno).build();
 
@@ -34,6 +34,7 @@ public class ReplyRepositoryTests {
                 .build();
 
         replyRepository.save(reply);
+
     }
 
     // @Transactional
