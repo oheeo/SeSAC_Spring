@@ -50,6 +50,8 @@ async function addReply(replyObj) {
     return response.data
 }
 
+// 특정한 번호의 댓글을 조회하고 수정하는 기능
+// 댓글 조회는 GET 방식으로, 댓글 수정은 PUT 방식으로 호출
 async function getReply(rno) {
     const response = await axios.get(`/replies/${rno}`)
     return response.data
@@ -61,6 +63,7 @@ async function modifyReply(replyObj) {
     return response.data
 }
 
+// 댓글의 삭제 처리
 async function removeReply(rno) {
     const response = await axios.delete(`/replies/${rno}`)
     return response.data

@@ -81,7 +81,7 @@
     </div>
   </div>
 
-
+  <!-- 댓글 수정 후에는 다시 현재 페이지를 호출해서 최대한 목록에서 수정된 댓글을 확일할 수 있도록 함 -->
   <div class="modal registerModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -110,6 +110,7 @@
 
   <!-- addReply()가 정상적으로 처리되면 서버에서는 '{'rno':11}'과 같은 JSON 데이터를 전송
        이를 이용해서 댓글이 추가되면 경고창을 보여주고 마지막 페이지로 이동해서 등록된 댓글을 볼 수 있게 구성 -->
+  <!-- class 속성값이 replyHeader 영역을 이용해서 선택한 댓글의 번호를 보여줌 -->
   <!-- 댓글 등록을 위한 모달창 -->
   <div class="modal modifyModal" tabindex="-1">
     <div class="modal-dialog">
@@ -262,6 +263,7 @@
   },false)
 
 
+  // 댓글의 내용을 수정할 수 있도록 구성 (댓글의 경우 다른 정보들은 수정할 수 없으므로)
   //modifyModal
   const modifyModal = new bootstrap.Modal(document.querySelector(".modifyModal"))
 
@@ -272,6 +274,7 @@
   const closeModifyBtn = document.querySelector(".closeModifyBtn")
 
 
+  // 특정한 댓글을 눌렀을 때 모달창을 보여줌
   replyList.addEventListener("click", function (e){
 
     e.preventDefault()
@@ -301,6 +304,7 @@
   },false)
 
 
+  // 화면에서 [Modify] 버튼에 대한 이벤트 처리와 모달창의 [Close] 버튼의 이벤트 처리
   modifyBtn.addEventListener("click", function(e) {
 
     const replyObj = {
@@ -312,7 +316,7 @@
       alert(result.rno+' 댓글이 수정되었습니다.')
       replyText.value = ''
       modifyModal.hide()
-      printReplies(page, size)
+      printReplies(page, size)  // 댓글이 수정된 후에는 다시 현재 페이지로 갱신
 
     }).catch(e => {
       console.log(e)
@@ -325,6 +329,8 @@
 
   }, false)
 
+  // 모달창의 [Remove] 버튼을 눌러서 댓글 삭제
+  // 삭제 후에느 경고창을 통해서 댓글이 삭제됐음을 알려주고 댓글의 1페이지로 이동
   removeBtn.addEventListener("click", function(e) {
 
     removeReply(replyHeader.innerHTML).then(result => {
