@@ -164,7 +164,7 @@
     replyList.innerHTML = str
   }
 
-  function printPages(data){ //페이지 목록 출력
+  function printPages(data){ //페이지 번호 출력
 
     //pagination
     let pageStr = '';
@@ -183,7 +183,7 @@
     replyPaging.innerHTML = pageStr
   }
 
-
+  // Axios 결과를 가져오면 앞의 함수들에게 전달
   function printReplies(page,size,goLast){
 
     getList({bno, page,size, goLast}).then(
@@ -197,7 +197,7 @@
 
   }
 
-  printReplies(1,10, true)
+  printReplies(1,10, true)  // 무조건 호출
 
   //댓글 등록 모달
   const registerModal = new bootstrap.Modal(document.querySelector(".registerModal"))

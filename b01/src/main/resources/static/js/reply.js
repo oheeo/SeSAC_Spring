@@ -22,6 +22,11 @@ async function get1(bno) {
 // }
 
 
+// 댓글 페이징 처리
+/*  bno : 현재 게시물 번호
+    page : 페이지 번호
+    size : 페이지당 사이즈
+    goList : 마지막 페이지 호출 여부 (댓글의 경우 한 페이지에서 모든 동작이 이루어지는데 새로 등록된 댓글은 마지막 페이지에 있기 때문에 강제적으로 마지막 댓글 페이지를 호출)  */
 async function getList({bno, page, size, goLast}){
 
     const result = await axios.get(`/replies/list/${bno}`, {params: {page, size}})
