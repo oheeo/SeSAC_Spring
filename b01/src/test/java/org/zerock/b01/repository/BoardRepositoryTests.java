@@ -4,15 +4,19 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.zerock.b01.domain.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
+import org.zerock.b01.domain.Board;
+import org.zerock.b01.domain.BoardImage;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -21,6 +25,9 @@ public class BoardRepositoryTests {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Test
     public void testInsert() {
@@ -159,6 +166,127 @@ public class BoardRepositoryTests {
         log.info(result.hasPrevious() +": " + result.hasNext());
 
         result.getContent().forEach(board -> log.info(board));
+    }
+
+    // Board와 BoardImage의 Insert 테스트 (게시물 하나에 첨부파일 3개)
+    @Test
+    public void testInsertWithImages() {
+        
+        Board board = Board.builder()
+                .title("Image Test")
+                .content("첨부파일 테스트")
+                .writer("tester")
+                .build();
+
+        for (int i = 0; i <3; i++) {
+
+            board.addImage(UUID.randomUUID().toString(), "file" + i + ".jpg");
+
+        }  // end for
+
+        boardRepository.save(board);
+    }
+
+//    @Test
+//    public void testReadWithImages() {
+//
+//        //반드시 존재하는 bno로 확인
+//        Optional<Board> result = boardRepository.findById(1L);
+//
+//        Board board = result.orElseThrow();
+//
+//        log.info(board);
+//        log.info("--------------------");
+//        log.info(board.getImageSet());
+//    }
+
+    @Test
+    public void testReadWithImages() {
+
+        //반드시 존재하는 bno로 확인
+        Optional<Board> result = boardRepository.findByIdWithImages(1L);
+
+        Board board = result.orElseThrow();
+
+        log.info(board);
+        log.info("--------------------");
+        for (BoardImage boardImage : board.getImageSet()) {
+            log.info(boardImage);
+        }
+    }
+
+    @Transactional
+    @Commit
+    @Test
+    public void testModifyImage() {
+
+        Optional<Board> result = boardRepository.findByIdWithImages(1L);
+
+        Board board = result.orElseThrow();
+
+        // 기존의 첨부파일은 삭제
+        board.clearImages();
+
+        // 새로운 첨부파일들
+        for (int i = 0; i < 2; i++) {
+
+            board.addImage(UUID.randomUUID().toString(), "updatefile" + i + ".jpg");
+        }
+
+        boardRepository.save(board);
+
+    }
+
+    // Reply 엔티티들을 삭제 후 Board를 삭제
+    @Test
+    @Transactional
+    @Commit
+    public void testRemoveAll() {
+
+        Long bno = 1L;
+
+        replyRepository.deleteByBoard_Bno(bno);
+
+        boardRepository.deleteById(bno);
+    }
+
+    // 번호가 5,10,15..의 경우 첨부파일이 없는 게시물이 작성되고,
+    // 나머지는 3개의 첨부파일이 있는 상태가 되도록 구성
+    @Test
+    public void testInsertAll() {
+
+        for (int i = 1; i <= 100; i++) {
+
+            Board board = Board.builder()
+                    .title("Title.." +i)
+                    .content("Content.." +i)
+                    .writer("writer.." +i)
+                    .build();
+
+            for (int j = 0; j < 3; j++) {
+
+                if (i % 5 == 0) {
+                    continue;
+                }
+                board.addImage(UUID.randomUUID().toString(), i +"file" + j + ".jpg");
+
+            }
+            boardRepository.save(board);
+
+        }  // end for
+    }
+
+    // 1. Board에 대한 페이징 처리가 실행되면서 limit로 처리
+    // 2. System.out.println()을 통해 Board의 bno 값을 출력
+    // 3. Board rorcpdml imageSet을 가져오기 위해서 board_image 테이블을 조회하는 쿼리 실행
+    // 4. 2,3의 과정이 반복적으로 실행
+    @Transactional
+    @Test
+    public void testSearchImageReplyCount() {
+
+        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
+
+        boardRepository.searchWithAll(null, null,pageable);
     }
 
 }

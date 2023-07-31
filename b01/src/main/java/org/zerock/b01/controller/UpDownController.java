@@ -96,7 +96,7 @@ public class UpDownController {
     }
 
     @ApiOperation(value = "remove 파일", notes = "DELETE 방식으로 파일 삭제")
-    @DeleteMapping("/remove/{fileName}")
+    @DeleteMapping("/remove/{fileName}")  // HTTP DELETE 쓴다는것
     public Map<String,Boolean> rempveFile(@PathVariable String fileName) {
 
         Resource resource = new FileSystemResource(uploadPath+File.separator + fileName);
@@ -110,7 +110,7 @@ public class UpDownController {
             String contentType = Files.probeContentType(resource.getFile().toPath());
             removed = resource.getFile().delete();
 
-            // 섬네일이 존재한다면 같이 삭제
+            // 섬네일이 존재한다면 같이 삭제 (이미지 파일이 아닐 경우 필요 X)
             if(contentType.startsWith("image")) {
                 File thumbnailFile = new File(uploadPath+File.separator +"s_" + fileName);
 
