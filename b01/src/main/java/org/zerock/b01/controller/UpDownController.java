@@ -4,9 +4,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.zerock.b01.dto.upload.UploadFileDTO;
 import org.zerock.b01.dto.upload.UploadResultDTO;
 
@@ -15,9 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 // 파일 업로드와 파일을 보여주는 기능을 메소드로 처리
 @RestController
@@ -77,4 +78,57 @@ public class UpDownController {
         return null;
     }
 
+    @ApiOperation(value = "view 파일", notes = "GET방식으로 첨부파일 조회")
+    @GetMapping("/view/{fileName}")
+    public ResponseEntity<Resource> viewFileGET(@PathVariable String fileName) {
+
+        Resource resource = new FileSystemResource(uploadPath+File.separator + fileName);
+
+        String resourceName = resource.getFilename();
+        HttpHeaders headers = new HttpHeaders();
+
+        try {
+            headers.add("Content-Type", Files.probeContentType( resource.getFile().toPath() ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok().headers(headers).body(resource);
+    }
+
+    @ApiOperation(value = "remove 파일", notes = "DELETE 방식으로 파일 삭제")
+    @DeleteMapping("/remove/{fileName}")
+    public Map<String,Boolean> rempveFile(@PathVariable String fileName) {
+
+        Resource resource = new FileSystemResource(uploadPath+File.separator + fileName);
+
+        String resourceName = resource.getFilename();
+
+        Map<String, Boolean> resultMap = new HashMap<>();
+        boolean removed = false;
+
+        try {
+            String contentType = Files.probeContentType(resource.getFile().toPath());
+            removed = resource.getFile().delete();
+
+            // 섬네일이 존재한다면 같이 삭제
+            if(contentType.startsWith("image")) {
+                File thumbnailFile = new File(uploadPath+File.separator +"s_" + fileName);
+
+                thumbnailFile.delete();
+            }
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
+        resultMap.put("result", removed);
+
+        return resultMap;
+    }
+
 }
+
+// 이미지 파일을 기준으로 코드를 작성했지만
+// 일반 파일에도 사용하려면 섬네일을 생성하지 않도록 해야 하고
+// GET 방식으로 이미지를 전송하는 방식 대신에 파일을 내려받도록 처리해야함
+
