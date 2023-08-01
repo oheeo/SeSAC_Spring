@@ -23,6 +23,8 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class BoardController {
 
+
+
     private final BoardService boardService;
 
     @GetMapping("/list")
@@ -51,6 +53,7 @@ public class BoardController {
         if(bindingResult.hasErrors()) {
             log.info("has errors.......");
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors() );
+
             return "redirect:/board/register";
         }
 
