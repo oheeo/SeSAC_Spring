@@ -54,95 +54,93 @@
             </div>
           </div>
 
-
         </div><!--end card body-->
 
-
-
-      </div><!--end card-->
-    </div><!-- end col-->
-  </div><!-- end row-->
-
-  <div class="row mt-3">
-    <div class="col-md-12">
-      <div class="my-4 ">
-        <button class="btn btn-info  addReplyBtn">ADD REPLY</button>
-      </div>
-      <!-- 댓글들이 출력되는 -->
-      <ul class="list-group replyList">
-      </ul>
-    </div>
-  </div>
-  <div class="row mt-3">
-    <div class="col">
-      <!-- 댓글의 페이징 처리를 담당하는 -->
-      <ul class="pagination replyPaging">
-      </ul>
-    </div>
-  </div>
-
-  <!-- 댓글 수정 후에는 다시 현재 페이지를 호출해서 최대한 목록에서 수정된 댓글을 확일할 수 있도록 함 -->
-  <div class="modal registerModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Register Reply</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="input-group mb-3">
-            <span class="input-group-text">Reply Text</span>
-            <input type="text" class="form-control replyText" >
+        <div class="col">
+          <div class="card" th:if="${dto.fileNames != null && dto.fileNames.size() > 0}">
+            <img class="card-img-top"
+                 th:each="fileName: ${dto.fileNames}"
+                 th:src="|/view/${fileName}|">
           </div>
-          <div class="input-group mb-3">
-            <span class="input-group-text">Replyer</span>
-            <input type="text" class="form-control replyer" >
-          </div>
+
+        </div><!--end card-->
+      </div><!-- end col-->
+    </div><!-- end row-->
+
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <div class="my-4 ">
+          <button class="btn btn-info  addReplyBtn">ADD REPLY</button>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary registerBtn">Register</button>
-          <button type="button" class="btn btn-outline-dark closeRegisterBtn" >Close</button>
-        </div>
+        <ul class="list-group replyList">
+        </ul>
       </div>
     </div>
-  </div>
-  <!-- end regist modal -->
+    <div class="row mt-3">
+      <div class="col">
+        <ul class="pagination replyPaging">
+        </ul>
+      </div>
+    </div>
 
-  <!-- addReply()가 정상적으로 처리되면 서버에서는 '{'rno':11}'과 같은 JSON 데이터를 전송
-       이를 이용해서 댓글이 추가되면 경고창을 보여주고 마지막 페이지로 이동해서 등록된 댓글을 볼 수 있게 구성 -->
-  <!-- class 속성값이 replyHeader 영역을 이용해서 선택한 댓글의 번호를 보여줌 -->
-  <!-- 댓글 등록을 위한 모달창 -->
-  <div class="modal modifyModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title replyHeader"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="input-group mb-3">
-            <span class="input-group-text">Reply Text</span>
-            <input type="text" class="form-control modifyText" >
+
+    <div class="modal registerModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Register Reply</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-info modifyBtn">Modify</button>
-          <button type="button" class="btn btn-danger removeBtn">Remove</button>
-          <button type="button" class="btn btn-outline-dark closeModifyBtn">Close</button>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Reply Text</span>
+              <input type="text" class="form-control replyText" >
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Replyer</span>
+              <input type="text" class="form-control replyer" >
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary registerBtn">Register</button>
+            <button type="button" class="btn btn-outline-dark closeRegisterBtn" >Close</button>
+          </div>
         </div>
       </div>
     </div>
-  </div> <!--modifyModal -->
+    <!-- end regist modal -->
+
+    <div class="modal modifyModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title replyHeader"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Reply Text</span>
+              <input type="text" class="form-control modifyText" >
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info modifyBtn">Modify</button>
+            <button type="button" class="btn btn-danger removeBtn">Remove</button>
+            <button type="button" class="btn btn-outline-dark closeModifyBtn">Close</button>
+          </div>
+        </div>
+      </div>
+    </div> <!--modifyModal -->
 
 
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-  <script src="/js/reply.js"></script>
+    <script src="/js/reply.js"></script>
 
-</div>
+  </div>
+</div><!-- layout fragment end -->
 
-<!-- get1()을 호출해서 호출 결과를 받기 위한 처리 -->
-<!-- 비동기 함수에서는 순수하게 비동기 통신만 처리하고 호출한 쪽에서 then()이나 catch() 등을 이용해 처리 -->
+
 <script layout:fragment="script" th:inline="javascript">
 
   const bno = [[${dto.bno}]]
@@ -168,7 +166,7 @@
     replyList.innerHTML = str
   }
 
-  function printPages(data){ //페이지 번호 출력
+  function printPages(data){ //페이지 목록 출력
 
     //pagination
     let pageStr = '';
@@ -187,7 +185,7 @@
     replyPaging.innerHTML = pageStr
   }
 
-  // Axios 결과를 가져오면 앞의 함수들에게 전달
+
   function printReplies(page,size,goLast){
 
     getList({bno, page,size, goLast}).then(
@@ -201,7 +199,7 @@
 
   }
 
-  printReplies(1,10, true)  // 처음부터 댓글의 마지막 페이지 보여줌
+  printReplies(1,10, true)
 
   //댓글 등록 모달
   const registerModal = new bootstrap.Modal(document.querySelector(".registerModal"))
@@ -211,7 +209,7 @@
   const replyer = document.querySelector(".replyer")
   const closeRegisterBtn = document.querySelector(".closeRegisterBtn")
 
-  // 화면상에서 [ADD REPLY] 버튼을 눌렀을 때 모달창 보여주는 이벤트 처리와 모달창의 [Close] 버튼에 대한 처리
+
   document.querySelector(".addReplyBtn").addEventListener("click", function (e){
     registerModal.show()
   },false)
@@ -220,8 +218,6 @@
     registerModal.hide()
   },false)
 
-  // reply.js의 addReply()를 호출하고 경고창을 통해서 추가된 댓글의 번호를 보여줌
-  // 경고창이 닫히면 마지막 페이지를 다시 호출해서 등록된 화면에 보일 수 있도록 구성
   registerBtn.addEventListener("click", function(e){
     const replyObj = {
       bno:bno,
@@ -240,8 +236,7 @@
   }, false)
 
 
-  // 페이지 번호는 매번 새로이 구성하므로 이벤트를 처리할 때는 항상 고정되어 있는 <ui>를 대상으로 이벤트 리스너를 등록하는 방식을 이용
-  // page와 size를 별도의 변수로 처리한 것은 댓글 수정과 같은 작업에서 현재 페이지를 유지해야할 가능성이 있기 때문
+
   let page = 1
   let size = 10
 
@@ -263,7 +258,6 @@
   },false)
 
 
-  // 댓글의 내용을 수정할 수 있도록 구성 (댓글의 경우 다른 정보들은 수정할 수 없으므로)
   //modifyModal
   const modifyModal = new bootstrap.Modal(document.querySelector(".modifyModal"))
 
@@ -274,7 +268,6 @@
   const closeModifyBtn = document.querySelector(".closeModifyBtn")
 
 
-  // 특정한 댓글을 눌렀을 때 모달창을 보여줌
   replyList.addEventListener("click", function (e){
 
     e.preventDefault()
@@ -304,7 +297,6 @@
   },false)
 
 
-  // 화면에서 [Modify] 버튼에 대한 이벤트 처리와 모달창의 [Close] 버튼의 이벤트 처리
   modifyBtn.addEventListener("click", function(e) {
 
     const replyObj = {
@@ -316,7 +308,7 @@
       alert(result.rno+' 댓글이 수정되었습니다.')
       replyText.value = ''
       modifyModal.hide()
-      printReplies(page, size)  // 댓글이 수정된 후에는 다시 현재 페이지로 갱신
+      printReplies(page, size)
 
     }).catch(e => {
       console.log(e)
@@ -329,8 +321,6 @@
 
   }, false)
 
-  // 모달창의 [Remove] 버튼을 눌러서 댓글 삭제
-  // 삭제 후에느 경고창을 통해서 댓글이 삭제됐음을 알려주고 댓글의 1페이지로 이동
   removeBtn.addEventListener("click", function(e) {
 
     removeReply(replyHeader.innerHTML).then(result => {
