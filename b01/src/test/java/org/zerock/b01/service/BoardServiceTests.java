@@ -33,22 +33,19 @@ public class BoardServiceTests {
         log.info("bno: " + bno);
     }
 
-    @Test
-    public void testModify() {
-
-        //변경에 필요한 데이터
-        BoardDTO boardDTO = BoardDTO.builder()
-                .bno(101L)
-                .title("Updated....101")
-                .content("Updated content 101...")
-                .build();
-
-        // 첨부파일을 하나 추가
-        boardDTO.setFileNames(Arrays.asList(UUID.randomUUID()+"_zzz.jpg"));
-
-        boardService.modify(boardDTO);
-
-    }
+//    @Test
+//    public void testModify() {
+//
+//        //변경에 필요한 데이터만
+//        BoardDTO boardDTO = BoardDTO.builder()
+//                .bno(101L)
+//                .title("Updated....101")
+//                .content("Updated content 101...")
+//                .build();
+//
+//        boardService.modify(boardDTO);
+//
+//    }
 
     @Test
     public void testList() {
@@ -60,19 +57,20 @@ public class BoardServiceTests {
                 .size(10)
                 .build();
 
-        PageResponseDTO<BoardDTO> responseDTO = boardService.list((pageRequestDTO));
+        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
 
         log.info(responseDTO);
+
     }
 
-    // 하나의 게시물에 3개의 이미지 파일이 추가된 경우를 테스트 (board 테이블과 board_image 테이블에 insert문이 실행되는지 확인)
+
     @Test
     public void testRegisterWithImages() {
 
         log.info(boardService.getClass().getName());
 
         BoardDTO boardDTO = BoardDTO.builder()
-                .title("File...Sample Tilte...")
+                .title("File...Sample Title...")
                 .content("Sample Content...")
                 .writer("user00")
                 .build();
@@ -81,7 +79,7 @@ public class BoardServiceTests {
                 Arrays.asList(
                         UUID.randomUUID()+"_aaa.jpg",
                         UUID.randomUUID()+"_bbb.jpg",
-                        UUID.randomUUID()+"_ccc.jpg"
+                        UUID.randomUUID()+"_bbb.jpg"
                 ));
 
         Long bno = boardService.register(boardDTO);
@@ -89,9 +87,8 @@ public class BoardServiceTests {
         log.info("bno: " + bno);
     }
 
-    // 첨부파일이 있는 게시물의 번호를 이용해서 게시물(Board)과 첨부파일(BoardImage)의 정보가 한번에 처리되는지 확인
     @Test
-    public void tsetReadAll() {
+    public void testReadAll() {
 
         Long bno = 101L;
 
@@ -101,15 +98,34 @@ public class BoardServiceTests {
 
         for (String fileName : boardDTO.getFileNames()) {
             log.info(fileName);
-        }  // end for
+        }//end for
+
     }
 
     @Test
-    public void testTemoveAll() {
+    public void testModify() {
+
+        //변경에 필요한 데이터
+        BoardDTO boardDTO = BoardDTO.builder()
+                .bno(101L)
+                .title("Updated....101")
+                .content("Updated content 101...")
+                .build();
+
+        //첨부파일을 하나 추가
+        boardDTO.setFileNames(Arrays.asList(UUID.randomUUID()+"_zzz.jpg"));
+
+        boardService.modify(boardDTO);
+
+    }
+
+    @Test
+    public void testRemoveAll() {
 
         Long bno = 1L;
 
         boardService.remove(bno);
+
     }
 
     @Test
@@ -136,8 +152,5 @@ public class BoardServiceTests {
 
             log.info("-------------------------------");
         });
-
-
     }
-
 }

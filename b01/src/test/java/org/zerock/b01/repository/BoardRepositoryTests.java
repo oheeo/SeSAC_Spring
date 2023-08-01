@@ -35,11 +35,11 @@ public class BoardRepositoryTests {
         IntStream.rangeClosed(1,100).forEach(i -> {
             Board board = Board.builder()
                     .title("title..." +i)
-                    .content("content..." +i)
+                    .content("content..." + i)
                     .writer("user"+ (i % 10))
                     .build();
 
-                    Board result = boardRepository.save(board);
+            Board result = boardRepository.save(board);
             log.info("BNO: " + result.getBno());
         });
     }
@@ -81,10 +81,11 @@ public class BoardRepositoryTests {
     @Test
     public void testPaging() {
 
-        // 1 page order by bno desc
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
+        //1 page order by bno desc
+        Pageable pageable = PageRequest.of(0,10, Sort.by("bno").descending());
 
         Page<Board> result = boardRepository.findAll(pageable);
+
 
         log.info("total count: "+result.getTotalElements());
         log.info( "total pages:" +result.getTotalPages());
@@ -95,15 +96,17 @@ public class BoardRepositoryTests {
 
         todoList.forEach(board -> log.info(board));
 
+
     }
 
     @Test
     public void testSearch1() {
 
-        // 2 page order by bno desc
+        //2 page order by bno desc
         Pageable pageable = PageRequest.of(1,10, Sort.by("bno").descending());
 
         boardRepository.search1(pageable);
+
     }
 
     @Test
@@ -130,65 +133,64 @@ public class BoardRepositoryTests {
 
         Page<Board> result = boardRepository.searchAll(types, keyword, pageable );
 
-        // total pages
+        //total pages
         log.info(result.getTotalPages());
 
-        // pag size
+        //pag size
         log.info(result.getSize());
 
-        // pageNumber
+        //pageNumber
         log.info(result.getNumber());
 
-        // prev next
-        log.info(result.hasPrevious() + ": " + result.hasNext());
-
-        result.getContent().forEach(board -> log.info(board));
-
-    }
-
-    @Test
-    public void testSearchReplyCount() {
-
-        String[] types = {"t", "c", "w"};
-
-        String keyword = "1";
-
-        Pageable pageable = PageRequest.of(0,10, Sort.by("bno").descending());
-
-        Page<BoardListReplyCountDTO> result = boardRepository.searchWithReplyCount(types, keyword, pageable);
-
-        // total pages
-        log.info(result.getTotalPages());
-        // pag size
-        log.info(result.getSize());
-        // pageNumber
-        log.info(result.getNumber());
-        // prev next
+        //prev next
         log.info(result.hasPrevious() +": " + result.hasNext());
 
         result.getContent().forEach(board -> log.info(board));
     }
 
-    // Board와 BoardImage의 Insert 테스트 (게시물 하나에 첨부파일 3개)
+
+    @Test
+    public void testSearchReplyCount() {
+
+        String[] types = {"t","c","w"};
+
+        String keyword = "1";
+
+        Pageable pageable = PageRequest.of(0,10, Sort.by("bno").descending());
+
+        Page<BoardListReplyCountDTO> result = boardRepository.searchWithReplyCount(types, keyword, pageable );
+
+        //total pages
+        log.info(result.getTotalPages());
+        //pag size
+        log.info(result.getSize());
+        //pageNumber
+        log.info(result.getNumber());
+        //prev next
+        log.info(result.hasPrevious() +": " + result.hasNext());
+
+        result.getContent().forEach(board -> log.info(board));
+    }
+
     @Test
     public void testInsertWithImages() {
-        
+
         Board board = Board.builder()
                 .title("Image Test")
                 .content("첨부파일 테스트")
                 .writer("tester")
                 .build();
 
-        for (int i = 0; i <3; i++) {
+        for (int i = 0; i < 3; i++) {
 
-            board.addImage(UUID.randomUUID().toString(), "file" + i + ".jpg");
+            board.addImage(UUID.randomUUID().toString(), "file"+i+".jpg");
 
-        }  // end for
+        }//end for
 
         boardRepository.save(board);
     }
 
-//    @Test
+    //    @Test
 //    public void testReadWithImages() {
 //
 //        //반드시 존재하는 bno로 확인
@@ -200,7 +202,6 @@ public class BoardRepositoryTests {
 //        log.info("--------------------");
 //        log.info(board.getImageSet());
 //    }
-
     @Test
     public void testReadWithImages() {
 
@@ -219,26 +220,25 @@ public class BoardRepositoryTests {
     @Transactional
     @Commit
     @Test
-    public void testModifyImage() {
+    public void testModifyImages() {
 
         Optional<Board> result = boardRepository.findByIdWithImages(1L);
 
         Board board = result.orElseThrow();
 
-        // 기존의 첨부파일은 삭제
+        //기존의 첨부파일들은 삭제
         board.clearImages();
 
-        // 새로운 첨부파일들
+        //새로운 첨부파일들
         for (int i = 0; i < 2; i++) {
 
-            board.addImage(UUID.randomUUID().toString(), "updatefile" + i + ".jpg");
+            board.addImage(UUID.randomUUID().toString(), "updatefile"+i+".jpg");
         }
 
         boardRepository.save(board);
 
     }
 
-    // Reply 엔티티들을 삭제 후 Board를 삭제
     @Test
     @Transactional
     @Commit
@@ -249,38 +249,32 @@ public class BoardRepositoryTests {
         replyRepository.deleteByBoard_Bno(bno);
 
         boardRepository.deleteById(bno);
+
     }
 
-    // 번호가 5,10,15..의 경우 첨부파일이 없는 게시물이 작성되고,
-    // 나머지는 3개의 첨부파일이 있는 상태가 되도록 구성
     @Test
     public void testInsertAll() {
 
         for (int i = 1; i <= 100; i++) {
 
-            Board board = Board.builder()
-                    .title("Title.." +i)
-                    .content("Content.." +i)
-                    .writer("writer.." +i)
+            Board board  = Board.builder()
+                    .title("Title.."+i)
+                    .content("Content.." + i)
+                    .writer("writer.." + i)
                     .build();
 
             for (int j = 0; j < 3; j++) {
 
-                if (i % 5 == 0) {
+                if(i % 5 == 0){
                     continue;
                 }
-                board.addImage(UUID.randomUUID().toString(), i +"file" + j + ".jpg");
-
+                board.addImage(UUID.randomUUID().toString(),i+"file"+j+".jpg");
             }
             boardRepository.save(board);
 
-        }  // end for
+        }//end for
     }
 
-    // 1. Board에 대한 페이징 처리가 실행되면서 limit로 처리
-    // 2. System.out.println()을 통해 Board의 bno 값을 출력
-    // 3. Board rorcpdml imageSet을 가져오기 위해서 board_image 테이블을 조회하는 쿼리 실행
-    // 4. 2,3의 과정이 반복적으로 실행
     @Transactional
     @Test
     public void testSearchImageReplyCount() {
@@ -298,5 +292,14 @@ public class BoardRepositoryTests {
 
 
     }
-
 }
+
+
+
+
+
+
+
+
+
+

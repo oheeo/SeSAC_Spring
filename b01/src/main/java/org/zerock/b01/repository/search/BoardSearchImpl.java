@@ -11,7 +11,9 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.zerock.b01.domain.Board;
 import org.zerock.b01.domain.QBoard;
 import org.zerock.b01.domain.QReply;
-import org.zerock.b01.dto.*;
+import org.zerock.b01.dto.BoardImageDTO;
+import org.zerock.b01.dto.BoardListAllDTO;
+import org.zerock.b01.dto.BoardListReplyCountDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +31,17 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
         JPQLQuery<Board> query = from(board);  // select.. from board
 
-        query.where(board.title.contains("1"));  // where title like ...
+        BooleanBuilder booleanBuilder = new BooleanBuilder(); // (
 
-        // paging
+        booleanBuilder.or(board.title.contains("11")); // title like ...
+
+        booleanBuilder.or(board.content.contains("11")); // content like ....
+
+        query.where(booleanBuilder);
+        query.where(board.bno.gt(0L));
+
+
+        //paging
         this.getQuerydsl().applyPagination(pageable, query);
 
         List<Board> list = query.fetch();
@@ -40,6 +50,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
 
         return null;
+
     }
 
     @Override
@@ -48,13 +59,13 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         QBoard board = QBoard.board;
         JPQLQuery<Board> query = from(board);
 
-        if ((types != null && types.length > 0) && keyword != null) { // 검색 조건과 키워드가 있다면
+        if( (types != null && types.length > 0) && keyword != null ){ //검색 조건과 키워드가 있다면
 
             BooleanBuilder booleanBuilder = new BooleanBuilder(); // (
 
-            for (String type : types) {
+            for(String type: types){
 
-                switch (type) {
+                switch (type){
                     case "t":
                         booleanBuilder.or(board.title.contains(keyword));
                         break;
@@ -65,14 +76,14 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         booleanBuilder.or(board.writer.contains(keyword));
                         break;
                 }
-            } // end for
+            }//end for
             query.where(booleanBuilder);
-        } // end if
+        }//end if
 
-        // bno > 0
+        //bno > 0
         query.where(board.bno.gt(0L));
 
-        // paging
+        //paging
         this.getQuerydsl().applyPagination(pageable, query);
 
         List<Board> list = query.fetch();
@@ -80,6 +91,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         long count = query.fetchCount();
 
         return new PageImpl<>(list, pageable, count);
+
     }
 
     @Override
@@ -93,13 +105,13 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
         query.groupBy(board);
 
-        if ( (types != null && types.length > 0) && keyword != null ) {
+        if( (types != null && types.length > 0) && keyword != null ){
 
             BooleanBuilder booleanBuilder = new BooleanBuilder(); // (
 
-            for(String type: types) {
+            for(String type: types){
 
-                switch (type) {
+                switch (type){
                     case "t":
                         booleanBuilder.or(board.title.contains(keyword));
                         break;
@@ -114,7 +126,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             query.where(booleanBuilder);
         }
 
-        // bno > 0
+        //bno > 0
         query.where(board.bno.gt(0L));
 
         JPQLQuery<BoardListReplyCountDTO> dtoQuery = query.select(Projections.bean(BoardListReplyCountDTO.class,
@@ -123,7 +135,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 board.writer,
                 board.regDate,
                 reply.count().as("replyCount")
-                ));
+        ));
 
         this.getQuerydsl().applyPagination(pageable,dtoQuery);
 
@@ -134,7 +146,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         return new PageImpl<>(dtoList, pageable, count);
     }
 
-//    @Override
+    //    @Override
 //    public Page<BoardListAllDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
 //
 //        QBoard board = QBoard.board;
@@ -183,13 +195,14 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         booleanBuilder.or(board.writer.contains(keyword));
                         break;
                 }
-            }  //end for
+            }//end for
             boardJPQLQuery.where(booleanBuilder);
         }
 
         boardJPQLQuery.groupBy(board);
 
         getQuerydsl().applyPagination(pageable, boardJPQLQuery); //paging
+
 
 
         JPQLQuery<Tuple> tupleJPQLQuery = boardJPQLQuery.select(board, reply.countDistinct());
@@ -218,7 +231,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                             .build()
                     ).collect(Collectors.toList());
 
-            dto.setBoardImages(imageDTOS);  // 처리된 BoardImageDTO들을 추가
+            dto.setBoardImages(imageDTOS);   // 처리된 BoardImageDTO들을 추가
 
             return dto;
         }).collect(Collectors.toList());
@@ -230,3 +243,20 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

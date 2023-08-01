@@ -24,4 +24,5 @@ public class ReplyServiceTests {
 
         log.info(replyService.register(replyDTO));
     }
+
 }

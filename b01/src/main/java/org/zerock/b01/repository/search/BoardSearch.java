@@ -5,8 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.zerock.b01.domain.Board;
 import org.zerock.b01.dto.BoardListAllDTO;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
-import org.zerock.b01.dto.PageRequestDTO;
-import org.zerock.b01.dto.PageResponseDTO;
 
 public interface BoardSearch {
 

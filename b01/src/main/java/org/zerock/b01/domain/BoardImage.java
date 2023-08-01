@@ -26,14 +26,16 @@ public class BoardImage implements Comparable<BoardImage> {
     @ManyToOne
     private Board board;
 
+
     @Override
     public int compareTo(BoardImage other) {
         return this.ord - other.ord;
     }
 
-    public void changeBoard(Board board) {
+    public void changeBoard(Board board){
         this.board = board;
-        // Board 객체를 나중에 지정 가능
-    }  // 나중에 Board 엔티티 삭제 시에 BoardImage 객체의 참조도 변경하기 위해 사용
-    
+    }
+    // Board 객체를 나중에 지정 가능
+    // 나중에 Board 엔티티 삭제 시에 BoardImage 객체의 참조도 변경하기 위해 사용
+
 }

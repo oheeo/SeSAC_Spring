@@ -1,5 +1,6 @@
 package org.zerock.b01.controller.advice;
 
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -27,7 +29,7 @@ public class CustomRestAdvice {
 
         Map<String, String> errorMap = new HashMap<>();
 
-        if(e.hasErrors()) {
+        if(e.hasErrors()){
 
             BindingResult bindingResult = e.getBindingResult();
 
@@ -36,7 +38,7 @@ public class CustomRestAdvice {
             });
         }
 
-            return ResponseEntity.badRequest().body(errorMap);
+        return ResponseEntity.badRequest().body(errorMap);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -48,11 +50,11 @@ public class CustomRestAdvice {
         Map<String, String> errorMap = new HashMap<>();
 
         errorMap.put("time", ""+System.currentTimeMillis());
-        errorMap.put("msg", "constraint fails");
+        errorMap.put("msg",  "constraint fails");
         return ResponseEntity.badRequest().body(errorMap);
     }
 
-    // 잘못된 번호가 전달될 때의 예외 처리
+
 //    @ExceptionHandler(NoSuchElementException.class)
 //    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
 //    public ResponseEntity<Map<String, String>> handleNoSuchElement(Exception e) {
@@ -62,13 +64,13 @@ public class CustomRestAdvice {
 //        Map<String, String> errorMap = new HashMap<>();
 //
 //        errorMap.put("time", ""+System.currentTimeMillis());
-//        errorMap.put("msg", "No Such Element Exception");
+//        errorMap.put("msg",  "No Such Element Exception");
 //        return ResponseEntity.badRequest().body(errorMap);
 //    }
 
-    // 잘못된 번호가 전달될 때의 예외 처리
-    @ExceptionHandler({NoSuchElementException.class,
-                       EmptyResultDataAccessException.class})
+    @ExceptionHandler({
+            NoSuchElementException.class,
+            EmptyResultDataAccessException.class }) //추가
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     public ResponseEntity<Map<String, String>> handleNoSuchElement(Exception e) {
 
@@ -77,7 +79,7 @@ public class CustomRestAdvice {
         Map<String, String> errorMap = new HashMap<>();
 
         errorMap.put("time", ""+System.currentTimeMillis());
-        errorMap.put("msg", "No Such Element Exception");
+        errorMap.put("msg",  "No Such Element Exception");
         return ResponseEntity.badRequest().body(errorMap);
     }
 

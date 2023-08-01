@@ -20,11 +20,11 @@ public class UploadResultDTO {
     private boolean img;
 
     // JSON으로 처리될 때는 link라는 속성으로 자동 처리
-    public String getLink() {
+    public String getLink(){
 
-        if(img) {
-            return "s_"+ uuid +"_"+fileName;  // 이미지인 경우 섬네일
-        } else {
+        if(img){
+            return "s_"+ uuid +"_"+fileName; //이미지인 경우 섬네일
+        }else {
             return uuid+"_"+fileName;
         }
     }

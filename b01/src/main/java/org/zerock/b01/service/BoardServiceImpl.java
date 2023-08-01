@@ -15,20 +15,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
-public class BoardServiceImpl implements BoardService {
+public class BoardServiceImpl implements BoardService{
 
     private final ModelMapper modelMapper;
 
     private final BoardRepository boardRepository;
 
+//    @Override
+//    public Long register(BoardDTO boardDTO) {
+//
+//        Board board = modelMapper.map(boardDTO, Board.class);
+//
+//        Long bno = boardRepository.save(board).getBno();
+//
+//        return bno;
+//    }
+
     @Override
     public Long register(BoardDTO boardDTO) {
-
-        // Board board = modelMapper.map(boardDTO, Board.class);
 
         Board board = dtoToEntity(boardDTO);
 
@@ -37,12 +46,22 @@ public class BoardServiceImpl implements BoardService {
         return bno;
     }
 
+//    @Override
+//    public BoardDTO readOne(Long bno) {
+//
+//        Optional<Board> result = boardRepository.findById(bno);
+//
+//        Board board = result.orElseThrow();
+//
+//        BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
+//
+//        return boardDTO;
+//    }
+
     @Override
     public BoardDTO readOne(Long bno) {
 
-        // Optional<Board> result = boardRepository.findById(bno);
-
-        // Board_image까지 조인 처리되는 findByWithImages()를 이용
+        //board_image까지 조인 처리되는 findByWithImages()를 이용
         Optional<Board> result = boardRepository.findByIdWithImages(bno);
 
         Board board = result.orElseThrow();
@@ -73,6 +92,7 @@ public class BoardServiceImpl implements BoardService {
         }
 
         boardRepository.save(board);
+
     }
 
     @Override
@@ -106,11 +126,13 @@ public class BoardServiceImpl implements BoardService {
         List<BoardDTO> dtoList = result.getContent().stream()
                 .map(board -> modelMapper.map(board,BoardDTO.class)).collect(Collectors.toList());
 
+
         return PageResponseDTO.<BoardDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(dtoList)
                 .total((int)result.getTotalElements())
                 .build();
+
     }
 
     @Override
@@ -131,7 +153,6 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public PageResponseDTO<BoardListAllDTO> listWithAll(PageRequestDTO pageRequestDTO) {
-
         String[] types = pageRequestDTO.getTypes();
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable("bno");

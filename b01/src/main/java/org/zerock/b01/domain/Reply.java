@@ -1,8 +1,8 @@
 package org.zerock.b01.domain;
 
 import lombok.*;
-
 import javax.persistence.*;
+
 
 @Entity
 @Table(name = "Reply", indexes = {
@@ -13,8 +13,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "board")
-// @ToString
-public class Reply extends BaseEntity {
+//@ToString
+public class Reply extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,10 @@ public class Reply extends BaseEntity {
 
     private String replyer;
 
-    public void changeText(String text) {
+    public void changeText(String text){
         this.replyText = text;
     }
+
 }
+
+
