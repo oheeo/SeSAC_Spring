@@ -165,6 +165,27 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         JPQLQuery<Board> boardJPQLQuery = from(board);
         boardJPQLQuery.leftJoin(reply).on(reply.board.eq(board)); //left join
 
+        // 검색 조건과 키워드 사용
+        if( (types != null && types.length > 0) && keyword != null ){
+
+            BooleanBuilder booleanBuilder = new BooleanBuilder(); // (
+
+            for(String type: types){
+
+                switch (type){
+                    case "t":
+                        booleanBuilder.or(board.title.contains(keyword));
+                        break;
+                    case "c":
+                        booleanBuilder.or(board.content.contains(keyword));
+                        break;
+                    case "w":
+                        booleanBuilder.or(board.writer.contains(keyword));
+                        break;
+                }
+            }  //end for
+            boardJPQLQuery.where(booleanBuilder);
+        }
 
         boardJPQLQuery.groupBy(board);
 
@@ -188,7 +209,16 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                     .replyCount(replyCount)
                     .build();
 
-            // BoardImage를 BoardImageDTO 처리할 부분
+            // Board 객체 내 BoardImage를 추출해서 BoardImageDTO로 변환하는 부분
+            List<BoardImageDTO> imageDTOS = board1.getImageSet().stream().sorted()
+                    .map(boardImage -> BoardImageDTO.builder()
+                            .uuid(boardImage.getUuid())
+                            .fileName(boardImage.getFileName())
+                            .ord(boardImage.getOrd())
+                            .build()
+                    ).collect(Collectors.toList());
+
+            dto.setBoardImages(imageDTOS);  // 처리된 BoardImageDTO들을 추가
 
             return dto;
         }).collect(Collectors.toList());
