@@ -114,8 +114,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public PageResponseDTO<BoardListAllDTO> listWithAll(PageRequestDTO pageRequestDTO)
-    {
+    public PageResponseDTO<BoardListAllDTO> listWithAll(PageRequestDTO pageRequestDTO) {
+
         return null;
     }
 

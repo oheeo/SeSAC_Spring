@@ -134,28 +134,6 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         return new PageImpl<>(dtoList, pageable, count);
     }
 
-    @Override
-    public Page<BoardListAllDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
-
-        QBoard board = QBoard.board;
-        QReply reply = QReply.reply;
-
-        JPQLQuery<Board> boardJPQLQuery = from(board);
-        boardJPQLQuery.leftJoin(reply).on(reply.board.eq(board));  // left join
-
-        getQuerydsl().applyPagination(pageable, boardJPQLQuery);  // paging
-
-        List<Board> boardList = boardJPQLQuery.fetch();
-
-        boardList.forEach(board1 -> {
-            System.out.println(board1.getBno());
-            System.out.println(board1.getImageSet());
-            System.out.println("-----------------");
-        });
-
-        return null;
-    }
-
 //    @Override
 //    public Page<BoardListAllDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
 //
@@ -165,35 +143,60 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 //        JPQLQuery<Board> boardJPQLQuery = from(board);
 //        boardJPQLQuery.leftJoin(reply).on(reply.board.eq(board));  // left join
 //
-//        boardJPQLQuery.groupBy(board);
-//
 //        getQuerydsl().applyPagination(pageable, boardJPQLQuery);  // paging
 //
-//        JPQLQuery<Tuple> tupleJPQLQuery = boardJPQLQuery.select(board, reply.countDistinct());
+//        List<Board> boardList = boardJPQLQuery.fetch();
 //
-//        List<Tuple> tupleList = tupleJPQLQuery.fetch();
+//        boardList.forEach(board1 -> {
+//            System.out.println(board1.getBno());
+//            System.out.println(board1.getImageSet());
+//            System.out.println("-----------------");
+//        });
 //
-//        List<BoardListAllDTO> dtoList = tupleList.stream().map(tuple -> {
-//
-//            Board board1 = (Board) tuple.get(board);
-//            long replyCount = tuple.get(1, Long.class);
-//
-//            BoardListAllDTO dto = BoardListAllDTO.builder()
-//                    .bno(board1.getBno())
-//                    .title(board1.getTitle())
-//                    .writer(board1.getWriter())
-//                    .regDate(board1.getRegDate())
-//                    .replyCount(replyCount)
-//                    .build();
-//
-//            // BoardImage를 BoardImageDTO 처리할 부분
-//
-//            return dto;
-//        }).collect(Collectors.toList());
-//
-//        long totalCount = boardJPQLQuery.fetchCount();
-//
-//        return new PageImpl<>(dtoList, pageable, totalCount);
+//        return null;
 //    }
+
+    @Override
+    public Page<BoardListAllDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
+
+        QBoard board = QBoard.board;
+        QReply reply = QReply.reply;
+
+        JPQLQuery<Board> boardJPQLQuery = from(board);
+        boardJPQLQuery.leftJoin(reply).on(reply.board.eq(board)); //left join
+
+
+        boardJPQLQuery.groupBy(board);
+
+        getQuerydsl().applyPagination(pageable, boardJPQLQuery); //paging
+
+
+        JPQLQuery<Tuple> tupleJPQLQuery = boardJPQLQuery.select(board, reply.countDistinct());
+
+        List<Tuple> tupleList = tupleJPQLQuery.fetch();
+
+        List<BoardListAllDTO> dtoList = tupleList.stream().map(tuple -> {
+
+            Board board1 = (Board) tuple.get(board);
+            long replyCount = tuple.get(1,Long.class);
+
+            BoardListAllDTO dto = BoardListAllDTO.builder()
+                    .bno(board1.getBno())
+                    .title(board1.getTitle())
+                    .writer(board1.getWriter())
+                    .regDate(board1.getRegDate())
+                    .replyCount(replyCount)
+                    .build();
+
+            // BoardImage를 BoardImageDTO 처리할 부분
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        long totalCount = boardJPQLQuery.fetchCount();
+
+
+        return new PageImpl<>(dtoList, pageable, totalCount);
+    }
 
 }

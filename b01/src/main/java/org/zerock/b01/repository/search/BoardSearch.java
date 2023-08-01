@@ -19,8 +19,7 @@ public interface BoardSearch {
                                                       String keyword,
                                                       Pageable pageable);
 
-//    Page<BoardListAllDTO> searchWithAll(String[] types,
-//                                        String keyword,
-//                                        Pageable pageable);
-
+    Page<BoardListAllDTO> searchWithAll(String[] types,
+                                        String keyword,
+                                        Pageable pageable);
 }
