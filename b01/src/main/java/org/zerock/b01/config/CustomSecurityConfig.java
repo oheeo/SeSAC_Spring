@@ -30,7 +30,7 @@ public class CustomSecurityConfig {
 
         // http.formLogin();  // 로그인 화면에서 로그인을 진행한다는 설정
 
-        http.formLogin().loginPage("/member/Login");
+        http.formLogin().loginPage("/member/login");  // 로그인이 필요한 경우 리다이렉트
 
         return http.build();
     }
