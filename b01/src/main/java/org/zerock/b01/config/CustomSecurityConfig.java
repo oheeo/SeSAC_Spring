@@ -32,6 +32,8 @@ public class CustomSecurityConfig {
 
         http.formLogin().loginPage("/member/login");  // 로그인이 필요한 경우 리다이렉트
 
+        http.csrf().disable();  // CSRF 토큰 비활성화 (username과 password라는 파라미터만으로 로그인 가능)
+
         return http.build();
     }
 
