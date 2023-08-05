@@ -101,17 +101,6 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping({"/read", "/modify"})
-    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
-
-        BoardDTO boardDTO = boardService.readOne(bno);
-
-        log.info(boardDTO);
-
-        model.addAttribute("dto", boardDTO);
-
-    }
 
 //    @GetMapping("/read")
 //    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
@@ -125,6 +114,7 @@ public class BoardController {
 //    }
 
 
+    @PreAuthorize("isAuthenticated()")  // 로그인한 사용자만 게시물 조회 가능
     @GetMapping({"/read", "/modify"})
     public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
 
@@ -136,6 +126,9 @@ public class BoardController {
 
     }
 
+    @PreAuthorize("principal.username == #boardDTO.writer")  // 게시물 수정은 현재 로그인한 사용자와 게시물의 작성자가 일치할 때만 가능
+    // principal.username : 현재 로그인된 사용자의 아이디
+    // #boardDTO : 현재 파라미터가 수집된 BoardDTO
     @PostMapping("/modify")
     public String modify( @Valid BoardDTO boardDTO,
                           BindingResult bindingResult,
@@ -180,6 +173,7 @@ public class BoardController {
 //    }
 
 
+    @PreAuthorize("principal.username == #boardDTO.writer")
     @PostMapping("/remove")
     public String remove(BoardDTO boardDTO, RedirectAttributes redirectAttributes) {
 

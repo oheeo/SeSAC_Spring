@@ -11,9 +11,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.zerock.b01.security.CustomUserDetailsService;
+import org.zerock.b01.security.handler.Custom403Handler;
 
 import javax.sql.DataSource;
 
@@ -37,23 +39,28 @@ public class CustomSecurityConfig {
 
         log.info("------------configure-------------------");
 
-        // http.formLogin();  // 로그인 화면에서 로그인을 진행한다는 설정
-
-        // 커스텀 로그인 페이지
-        http.formLogin().loginPage("/member/login");  // 로그인이 필요한 경우 리다이렉트
-
-        // CSRF 토큰 비활성화 (username과 password라는 파라미터만으로 로그인 가능)
+        //커스텀 로그인 페이지
+        http.formLogin().loginPage("/member/login");
+        //CSRF 토큰 비활성화
         http.csrf().disable();
 
-        // 자동 로그인 (UserDetailsService 타입의 객체)
         http.rememberMe()
                 .key("12345678")
                 .tokenRepository(persistentTokenRepository())
                 .userDetailsService(userDetailsService)
                 .tokenValiditySeconds(60*60*24*30);
 
+        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler()); //403
+
         return http.build();
     }
+
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new Custom403Handler();
+    }
+
 
     // 단순한 css, js 파일 등 정적 자원들은 스프링 시큐리티 적용에서 제외
     @Bean
