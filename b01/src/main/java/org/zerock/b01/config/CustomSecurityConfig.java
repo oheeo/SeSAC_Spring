@@ -11,12 +11,21 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.zerock.b01.security.CustomUserDetailsService;
+
+import javax.sql.DataSource;
 
 @Log4j2
 @Configuration
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)  // 원하는 곳에 @PreAuthorize 혹은 @PostAuthorize 어노테이션을 이용해서 사전 혹은 사후의 권한을 체크할 수 있다.
 public class CustomSecurityConfig {
+
+   // 주입 필요
+    private final DataSource dataSource;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -30,9 +39,18 @@ public class CustomSecurityConfig {
 
         // http.formLogin();  // 로그인 화면에서 로그인을 진행한다는 설정
 
+        // 커스텀 로그인 페이지
         http.formLogin().loginPage("/member/login");  // 로그인이 필요한 경우 리다이렉트
 
-        http.csrf().disable();  // CSRF 토큰 비활성화 (username과 password라는 파라미터만으로 로그인 가능)
+        // CSRF 토큰 비활성화 (username과 password라는 파라미터만으로 로그인 가능)
+        http.csrf().disable();
+
+        // 자동 로그인 (UserDetailsService 타입의 객체)
+        http.rememberMe()
+                .key("12345678")
+                .tokenRepository(persistentTokenRepository())
+                .userDetailsService(userDetailsService)
+                .tokenValiditySeconds(60*60*24*30);
 
         return http.build();
     }
@@ -45,6 +63,16 @@ public class CustomSecurityConfig {
 
         return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 
+    }
+
+    // 자동 로그인 (쿠키와 관련된 정보를 테이블에 보관하도록 지정하는 DataSource)
+    // remember-me 쿠키를 생성할 때는 쿠키의 값을 인코딩하기 위한 키(key)값과 필요한 정보를 제공하는 rokenRepository를 지정함.
+    // 코드상에서는 PersistentTokenRepository() 메소드를 이용해 처리
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+        repo.setDataSource(dataSource);
+        return repo;
     }
 
 }
