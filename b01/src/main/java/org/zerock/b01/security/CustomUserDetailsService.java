@@ -21,12 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws
-            UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         log.info("loadUserByUsername: " + username);
 
-            UserDetails userDetails = User.builder().username("user1")
+            UserDetails userDetails = User.builder()
+                    .username("user1")
                     // .password("1111")
                     .password(passwordEncoder.encode("1111"))  // 패스워드 인코딩 필요
                     .authorities("ROLE_USER")

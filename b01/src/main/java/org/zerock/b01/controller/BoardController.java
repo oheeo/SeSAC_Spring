@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -73,7 +74,8 @@ public class BoardController {
         model.addAttribute("responseDTO", responseDTO);
     }
 
-
+    // '/board/register'라는 경로로 접근할 때 'USER'라는 권한을 사전에 체크
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/register")
     public void registerGET(){
 
