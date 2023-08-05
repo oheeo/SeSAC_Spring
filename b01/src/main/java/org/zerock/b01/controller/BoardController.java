@@ -101,6 +101,17 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping({"/read", "/modify"})
+    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
+
+        BoardDTO boardDTO = boardService.readOne(bno);
+
+        log.info(boardDTO);
+
+        model.addAttribute("dto", boardDTO);
+
+    }
 
 //    @GetMapping("/read")
 //    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
