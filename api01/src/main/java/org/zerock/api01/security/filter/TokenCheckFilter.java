@@ -21,6 +21,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         String path = request.getRequestURI();
 
         if (!path.startsWith("/api/")) {
@@ -28,9 +29,9 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.info("Token Check Filter.......................");
+        log.info("Token Check Filter..........................");
         log.info("JWTUtil: " + jwtUtil);
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request,response);
     }
 }

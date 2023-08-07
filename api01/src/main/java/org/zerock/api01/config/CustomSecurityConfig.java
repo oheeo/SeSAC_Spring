@@ -63,7 +63,6 @@ public class CustomSecurityConfig {
 
         log.info("------------configure-------------------");
 
-
         // AuthenticationManager설정
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(apiUserDetailsService).passwordEncoder(passwordEncoder());
@@ -89,12 +88,13 @@ public class CustomSecurityConfig {
 
         //api로 시작하는 모든 경로는 TokenCheckFilter 동작
         http.addFilterBefore(
-                tokenCheckFilter(jwtUtil, apiUserDetailsService),
+                tokenCheckFilter(jwtUtil),
                 UsernamePasswordAuthenticationFilter.class
         );
 
         http.csrf().disable();  // CSRF 토큰의 비활성화
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);  // 세션을 사용하지 않음
+
         return http.build();
     }
 
