@@ -22,6 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.zerock.api01.security.APIUserDetailsService;
+import org.zerock.api01.security.filter.APILoginFilter;
+import org.zerock.api01.security.handler.APILoginSuccessHandler;
 
 import java.util.Arrays;
 
@@ -32,6 +35,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class CustomSecurityConfig {
 
+    // 주입
+    private final APIUserDetailsService apiUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -52,7 +57,27 @@ public class CustomSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
 
-        log.info("------------configure-------------------");
+        //AuthenticationManager설정
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(apiUserDetailsService).passwordEncoder(passwordEncoder());
+
+        // Get AuthenticationManager
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+
+        //반드시 필요
+        http.authenticationManager(authenticationManager);
+
+        //APILoginFilter
+        APILoginFilter apiLoginFilter = new APILoginFilter("/generateToken");
+        apiLoginFilter.setAuthenticationManager(authenticationManager);
+
+        // APILoginSuccessHandler
+        APILoginSuccessHandler successHandler = new APILoginSuccessHandler();
+        // SuccessHandler 세팅
+        apiLoginFilter.setAuthenticationSuccessHandler(successHandler);
+
+        //APILoginFilter의 위치 조정
+        http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.csrf().disable();  // CSRF 토큰의 비활성화
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);  // 세션을 사용하지 않음
