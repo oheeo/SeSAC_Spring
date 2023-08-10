@@ -25,16 +25,15 @@ public class APIUserDetailsService implements UserDetailsService {
     // loadUserByUsername() 내부에는 해당 사용자가 존재할 때 APIUserDTO를 반환
     // 모든 사용자는 ROLE_USER 권한을 가짐
     @Override
-    public UserDetails loadUserByUsername(String username) throws
-            UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Optional<APIUser> result = apiUserRepository.findById(username);
 
         APIUser apiUser = result.orElseThrow(() -> new UsernameNotFoundException("Cannot find mid"));
 
-        log.info("APIUserDetailsService apiUser-----------------------------------");
+        log.info("APIUserDetailsService apiUser-------------------------------------");
 
-        APIUserDTO dto = new APIUserDTO(
+        APIUserDTO dto =  new APIUserDTO(
                 apiUser.getMid(),
                 apiUser.getMpw(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));

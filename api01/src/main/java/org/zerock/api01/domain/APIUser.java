@@ -17,7 +17,7 @@ public class APIUser {
     private String mid;
     private String mpw;
 
-    public void changePw(String mpw) {
+    public void changePw(String mpw){
         this.mpw = mpw;
     }
 }

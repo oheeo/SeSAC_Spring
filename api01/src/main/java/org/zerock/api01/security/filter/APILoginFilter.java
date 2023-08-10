@@ -7,7 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.zerock.api01.util.JWTUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,20 +34,25 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
             return null;
         }
 
+        log.info("-----------------------------------------");
+        log.info(request.getMethod());
+
         Map<String, String> jsonData = parseRequestJSON(request);
 
-        log.info(jsonData);
+        log.info("jsonData: "+jsonData);
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(
                 jsonData.get("mid"),
                 jsonData.get("mpw"));
 
         return getAuthenticationManager().authenticate(authenticationToken);
     }
 
+
     private Map<String,String> parseRequestJSON(HttpServletRequest request) {
 
-        // JSON 데이터를 분석해서 mid, mpw 전달 값을 Map으로 처리
+        //JSON 데이터를 분석해서 mid, mpw 전달 값을 Map으로 처리
         try(Reader reader = new InputStreamReader(request.getInputStream())){
 
             Gson gson = new Gson();
