@@ -41,7 +41,7 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
 
         log.info("Refresh Token Filter...run..............1");
 
-        //전송된 JSON에서 accessToken과 refreshToken을 얻어온다.
+        // 전송된 JSON에서 accessToken과 refreshToken을 얻어온다.
         Map<String, String> tokens = parseRequestJSON(request);
 
         String accessToken = tokens.get("accessToken");
@@ -69,15 +69,15 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
             return;
         }
 
-        //Refresh Token의 유효시간이 얼마 남지 않은 경우
+        // Refresh Token의 유효시간이 얼마 남지 않은 경우
         Integer exp = (Integer)refreshClaims.get("exp");
 
         Date expTime = new Date(Instant.ofEpochMilli(exp).toEpochMilli() * 1000);
 
         Date current = new Date(System.currentTimeMillis());
 
-        //만료 시간과 현재 시간의 간격 계산
-        //만일 3일 미만인 경우에는 Refresh Token도 다시 생성
+        // 만료 시간과 현재 시간의 간격 계산
+        // 만일 3일 미만인 경우에는 Refresh Token도 다시 생성
         long gapTime = (expTime.getTime() - current.getTime());
 
         log.info("-----------------------------------------");
@@ -87,7 +87,7 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
 
         String mid = (String)refreshClaims.get("mid");
 
-        //이상태까지 오면 무조건 AccessToken은 새로 생성
+        // 이상태까지 오면 무조건 AccessToken은 새로 생성
         String accessTokenValue = jwtUtil.generateToken(Map.of("mid", mid), 1);
 
         String refreshTokenValue = tokens.get("refreshToken");
@@ -110,7 +110,7 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
 
     private Map<String,String> parseRequestJSON(HttpServletRequest request) {
 
-        //JSON 데이터를 분석해서 mid, mpw 전달 값을 Map으로 처리
+        // JSON 데이터를 분석해서 mid, mpw 전달 값을 Map으로 처리
         try(Reader reader = new InputStreamReader(request.getInputStream())){
 
             Gson gson = new Gson();
