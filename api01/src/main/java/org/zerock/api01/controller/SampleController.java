@@ -15,7 +15,7 @@ import java.util.List;
 public class SampleController {
 
     // 단순하게 문자열의 배열을 반환
-    // '/api/sample/doA'경로로 호출 가능
+    // '/api/sample/doA' 경로로 호출 가능
     @GetMapping("/doA")
     @PreAuthorize("hasRole('ROLE_USER')")
     public List<String> doA() {
